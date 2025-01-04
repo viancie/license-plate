@@ -1,0 +1,111 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: #F1EAE9;
+    margin:0;
+    padding:0;
+    width: 100%;
+}
+
+.header a {
+    color: #6C1606
+}
+
+.home {
+    padding:0;
+    color: white
+}
+.home .contain {
+    margin:2rem;
+    background-color: #EDCFCA;
+    display: flex;
+    border-radius: 20px;
+    padding:1.5rem;
+}
+
+.button {
+    padding: 0.5rem;
+    background-color: #6C1606;
+    font-size:small;
+    height:2.3rem;
+    border-radius: 5px;
+    cursor:pointer;
+    color:white;
+    border:none;
+}
+
+#start-button {
+    font-size:large;
+    height:4rem;
+    width: 10rem;
+}
+
+#video {
+    width:50%; 
+    padding:1rem;
+}
+
+#video-container {
+    display: none;
+    margin-bottom:1rem;
+}
+
+#video-feed {
+    width: 100%;
+    border-radius: 20px;
+    display: block;
+}
+
+.table-container {
+    width: 50%;
+    padding:1rem;
+}
+
+.table-container .button-container {
+    padding-left:1rem; 
+    padding-right:1rem; 
+    padding-bottom:1rem;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+thead {
+    background-color:#6C1606;
+    color:white; 
+    position:sticky;
+    top:0; 
+    z-index:1;
+    border-color:black;
+}
+th {
+    text-align: center;
+}
+
+.table-here {
+    max-height:450px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+#plate-data {
+    background-color:rgba(255,255,255,0.3);
+    color:#6C1606; 
+    text-align:center; 
+    border-color:#e2a99d;
+}
+
+.delete-btn {
+    padding: 0.5rem;
+    background-color: #6C1606;
+    font-size:x-small;
+    height:2.3rem;
+    border-radius: 5px;
+    cursor:pointer;
+    color:white;
+    border:none;
+
+}

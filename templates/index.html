@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>License Plate Detection</title>
+
+    {# bootstrap css #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+    {# main stylesheet #}
+    <link href="static/css/style.css" rel="stylesheet">
+
+</head>
+<body> 
+    {# header section #}
+    <header class="header">
+        <nav class="navbar sticky-top navbar-expand-lg px-5" style="background-color: transparent; border-bottom: 2px solid #EDCFCA;">
+            <a class="navbar-brand fw-bold" href="/">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" width="30" height="30" class="d-inline-block align-top" style="margin-left:2.5rem" alt="">
+                PlatePatrol
+            </a>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav" style="margin-left: auto;">
+                    <a class="nav-item nav-link" href="#">Home</a>
+                    <a class="nav-item nav-link" href="#about">About</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    {# home section #}
+    <section class="home" id="home">
+        <div class = "contain">
+
+            {# video section #}
+            <div id="video" style="align-items:center; display:flex; justify-content:center;">
+                <div id="video-container">
+                    <img id="video-feed" src="" alt="Live Video">
+                </div>
+
+                <button id="start-button" class="button">Start Video</button>
+                <button id="stop-button" class="button" style="display: none; margin-left:auto;">Stop Video</button>
+            </div>
+
+            {# license plate table section #}
+            <div class="table-container">
+                <div class="table-here">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">License Plate</th>
+                                <th scope="col">Timestamp</th>
+                                <th scope="col">Plate Image</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="plate-data"></tbody>
+                    </table>
+                </div>
+
+                {# license plate buttons section #}
+                <div class="button-container">
+                    <button id="download" class="button" style="margin-right:10px; background-color:green">  
+                        <img src="{{ url_for('static', filename='images/download.png') }}" width="20" height="20"alt="">
+                    </button>
+                    <button id="trash" class="button" style="background-color: red;">
+                        <img src="{{ url_for('static', filename='images/trash-can.png') }}" width="20" height="20"alt="">
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    {# about section #}
+    </section>
+
+    <section class="about" id="about">
+
+    </section>
+
+    {# javascript #}
+
+    <script>
+        const startButton = document.getElementById('start-button');
+        const stopButton = document.getElementById('stop-button');
+        const videoContainer = document.getElementById('video-container');
+        const videoFeed = document.getElementById('video-feed');
+        const plateData = document.getElementById('plate-data');
+        const video = document.getElementById('video')
+
+        // if start button is clicked
+        startButton.addEventListener('click', function() {
+            startButton.style.display = 'none';
+            stopButton.style.display = 'inline-block';
+            videoContainer.style.display = 'block';
+            video.style.display = 'block';
+            
+            // change source of video when start is clicked
+            videoFeed.src = "/video";
+        });
+
+        // if stop button is clicked
+        stopButton.addEventListener('click', function() {
+            startButton.style.display = 'inline-block';
+            stopButton.style.display = 'none';
+            videoContainer.style.display = 'none';
+            video.style.alignItems = 'center';
+            video.style.display = 'flex'; 
+            video.style.justifyContent = 'center';
+            
+            // stop the video feed
+            videoFeed.src = "";
+        });
+
+        // update license plate data table every 2 seconds
+        setInterval(function () {
+            fetch('/get_license_plate_data')
+                .then(response => response.json())
+                .then(data => {
+                    plateData.innerHTML = '';
+                    
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+
+                        // html for each for
+                        row.innerHTML = `
+                            <td>${item.license_plate}</td>
+                            <td>${item.timestamp}</td>
+                            <td><img src="${item.file_path}" alt="License Plate Image" width="120" height="100"></td>
+                            <td>
+                                <button class="delete-btn" data-license-plate="${item.file_path}">
+                                    <img src="{{ url_for('static', filename='images/trash-can.png') }}" width="15" height="15"alt="">
+                                </button>
+                            </td>
+                        `;
+
+                        // insert new row at the top
+                        plateData.insertBefore(row, plateData.firstChild);
+
+
+                        // event listener for the delete button
+                        const deleteButton = row.querySelector('.delete-btn');
+                        deleteButton.addEventListener('click', function() {
+                            const licensePlate = deleteButton.getAttribute('data-license-plate');
+
+                            fetch('/delete_license_plate', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ license_plate: licensePlate })
+                            })
+                            .then(response => {
+                                if (response.ok) {
+                                    // remove row in the table
+                                    row.remove();
+                                } else {
+                                    alert("Failed to delete license plate.");
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert("Error deleting license plate.");
+                            });
+                        });
+                    });
+                });
+        }, 2000);
+
+        // if delete all data is clicked
+        document.getElementById('trash').addEventListener('click', function() {
+            fetch('/delete_license_plate_data', {
+                method: 'POST', 
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+                alert("License plate data has been deleted.");
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("An error occurred while deleting the data.");
+            });
+        });
+
+        // if download all data is clicked 
+        document.getElementById('download').addEventListener('click', function() {
+            window.location.href = '/download_license_plate_data';
+        });
+
+    </script>
+</body>
+</html>
