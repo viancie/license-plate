@@ -14,7 +14,7 @@ body {
     padding:0;
     color: white
 }
-.home .contain {
+.contain {
     margin:2rem;
     background-color: #EDCFCA;
     display: flex;
@@ -108,4 +108,50 @@ th {
     color:white;
     border:none;
 
+}
+
+.about .contain {
+    margin-top: 5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.about h1 {
+    color: #6C1606;
+    font-weight: bold;
+    margin-top: 1.5rem;
+}
+
+.about h4 {
+    font-weight: 300;
+    color: #6C1606;
+    text-align: center;
+    font-size: 1rem;
+    width: 75%;
+    margin-top: 1rem;
+}
+
+.about h5 {
+    font-weight: bold;
+    color: #F1EAE9;
+    text-shadow: 1px 1px 2px #6C1606;
+    margin-top: 1rem;
+}
+
+.about p {
+    color: #6C1606;
+    font-size: 0.8rem;
+}
+
+.members-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    margin-top: 1.5rem;
+}
+
+.member-div {
+    padding:1rem;
+    text-align: center;
 }
