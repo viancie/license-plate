@@ -1,5 +1,5 @@
 from flask import Flask, render_template, Response, jsonify,request, send_file
-from opencsv_video import generate_frames, get_license_plate_data, delete_license_plate_data, delete_license_plate_row
+from opencsv_video import generate_frames, get_license_plate_data, delete_license_plate_data, delete_license_plate_row,clean_directory
 from io import BytesIO
 import pandas as pd
 import zipfile
@@ -8,8 +8,14 @@ import copy
 
 app = Flask(__name__)
 
+delete_times = 0
+
 @app.route('/')
 def index():
+    global delete_times
+    if delete_times == 0:
+        delete_times =1
+        clean_directory('./static/plates')
     return render_template('index.html') 
 
 # to show the live video

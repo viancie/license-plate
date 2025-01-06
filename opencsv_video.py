@@ -1,7 +1,7 @@
 import cv2
 import torch
 from ultralytics import YOLO
-import easyocr
+from paddleocr import PaddleOCR
 from datetime import datetime, timedelta
 from util import read_license_plate
 import os
@@ -11,7 +11,7 @@ path = "./static/models/license_plate_detector.pt"
 model = YOLO(path)
 
 
-reader = easyocr.Reader(['en'])
+reader = PaddleOCR(use_angle_cls=True, lang='en')
 
 cap = cv2.VideoCapture(0) 
 if not cap.isOpened():
@@ -39,7 +39,7 @@ def detect_license_plate(frame):
         license_plate_region = frame[y1:y2, x1:x2]
         
         # read the text from the license plate
-        result = reader.readtext(license_plate_region, detail=0) 
+        result = reader.ocr(license_plate_region, cls=True) 
 
         if result:
             # check and convert text into license plate format
@@ -73,7 +73,7 @@ def detect_license_plate(frame):
                     sanitized_timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S").replace(":", "-")
                     sanitized_detected_text = detected_text.replace(" ", "_")
                     filename = f"{save_dir}/license_plate_{sanitized_detected_text}_{sanitized_timestamp}.jpg"
-                    cv2.imwrite(filename, license_plate_region)
+                    cv2.imwrite(filename, frame)
                     
                     # save all data to license plate data
                     license_plate_data.append({"license_plate": detected_text, "timestamp": timestamp, "file_path": filename})

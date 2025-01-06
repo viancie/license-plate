@@ -108,16 +108,19 @@ def format_license_motor2(text):
     return license_plate_
 
 # check license plate
-def read_license_plate(text):
-    text = text.upper().replace(' ', '')
+def read_license_plate(results):
+    if results is not None: 
+        detected_texts = [result[1][0] for result in results] 
 
-    if license_complies_format_vehicle(text):
-        return format_license_vehicle(text)
-    
-    if license_complies_format_motor1(text):
-        return format_license_motor1(text)
-    
-    if license_complies_format_motor2(text):
-        return format_license_motor2(text)
+        text = ''.join(detected_texts).upper().replace(' ', '')
+
+        if license_complies_format_vehicle(text):
+            return format_license_vehicle(text)
+        
+        if license_complies_format_motor1(text):
+            return format_license_motor1(text)
+        
+        if license_complies_format_motor2(text):
+            return format_license_motor2(text)
 
     return None
